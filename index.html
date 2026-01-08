@@ -1,99 +1,103 @@
 <!doctype html>
 <html lang="tr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IBAN</title>
-
-<style>
-:root{
-  --bg1:#0b1220;
-  --bg2:#0f1b2d;
-  --card:rgba(255,255,255,.06);
-  --stroke:rgba(255,255,255,.12);
-  --text:rgba(255,255,255,.92);
-  --muted:rgba(255,255,255,.7);
-  --shadow:0 20px 60px rgba(0,0,0,.45);
-  --radius:22px;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:
-    radial-gradient(1200px 600px at 10% -10%, #1f2b55 0%, transparent 60%),
-    radial-gradient(1000px 500px at 110% 10%, #143a2a 0%, transparent 60%),
-    linear-gradient(180deg,var(--bg1),var(--bg2));
-  color:var(--text);
-}
-.card{
-  width:100%;
-  max-width:420px;
-  background:var(--card);
-  border:1px solid var(--stroke);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:26px;
-  backdrop-filter:blur(12px);
-  text-align:center;
-}
-.title{
-  font-size:18px;
-  font-weight:600;
-  margin-bottom:4px;
-}
-.sub{
-  font-size:12px;
-  color:var(--muted);
-  margin-bottom:18px;
-}
-.iban{
-  font-size:20px;
-  letter-spacing:1px;
-  padding:18px;
-  border-radius:16px;
-  border:1px dashed var(--stroke);
-  cursor:pointer;
-  user-select:none;
-}
-.iban:active{
-  transform:scale(.98);
-}
-.toast{
-  margin-top:14px;
-  font-size:12px;
-  color:#7cf7b2;
-  opacity:0;
-  transition:.3s;
-}
-.toast.show{opacity:1}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IBAN</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background:#0b1220; color:#fff; margin:0; }
+    .wrap { max-width:520px; margin:0 auto; padding:22px; }
+    .card { background:#111b31; border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.35); }
+    h1 { font-size:20px; margin:0 0 10px; }
+    .label { font-size:12px; opacity:.75; margin-top:14px; }
+    .value { font-size:16px; font-weight:700; line-height:1.35; word-break:break-word; }
+    .ibanBox { margin-top:10px; padding:14px; background:#0b1220; border:1px dashed rgba(255,255,255,.25); border-radius:14px; }
+    .btns { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    button, a.btn {
+      appearance:none; border:0; cursor:pointer; padding:12px 14px; border-radius:14px;
+      font-weight:700; text-decoration:none; display:inline-flex; align-items:center; justify-content:center;
+    }
+    .primary { background:#e11d48; color:#fff; }
+    .secondary { background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.18); }
+    .note { margin-top:12px; font-size:12px; opacity:.75; }
+    .toast { margin-top:10px; font-size:13px; color:#a7f3d0; display:none; }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Ödeme Bilgileri</h1>
 
-<div class="card">
-  <div class="title">IBAN</div>
-  <div class="sub">YAVUZ GROUP KUYUMCULUK SANAYİ VE TİCARET</div>
+      <div class="label">Banka</div>
+      <div class="value" id="bank">Banka</div>
 
-  <div class="iban" onclick="copyIBAN()">
-    TR47 0001 0013 7897 7896 7950 04
+      <div class="label">Alıcı</div>
+      <div class="value" id="name">YAVUZ GROUP KUYUMCULUK SANAYİ VE TİCARET</div>
+
+      <div class="label">IBAN</div>
+      <div class="ibanBox">
+        <div class="value" id="ibanPretty">TR47 0001 0013 7897 7896 7950 04</div>
+      </div>
+
+      <div class="btns">
+        <button class="primary" id="copyBtn">IBAN Kopyala</button>
+        <button class="secondary" id="shareBtn">Paylaş</button>
+        <a class="btn secondary" id="whatsBtn" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+
+      <div class="toast" id="toast">Kopyalandı ✅</div>
+      <div class="note">Not: “Paylaş” bazı cihazlarda görünmeyebilir; o zaman WhatsApp butonunu kullan.</div>
+    </div>
   </div>
 
-  <div class="toast" id="toast">Kopyalandı ✅</div>
-</div>
+  <script>
+    // ✅ GÜNCEL BİLGİLER
+    const ibanPretty = "TR47 0001 0013 7897 7896 7950 04";
+    const ibanPlain  = "TR470001001378977896795004";
+    const bank = "Banka"; // Banka adını biliyorsan burayı yaz: "VakıfBank" gibi
+    const name = "YAVUZ GROUP KUYUMCULUK SANAYİ VE TİCARET";
 
-<script>
-function copyIBAN(){
-  navigator.clipboard.writeText("TR470001001378977896795004");
-  const t=document.getElementById("toast");
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),1800);
-}
-</script>
+    // Ekrana bas
+    document.getElementById("bank").textContent = bank;
+    document.getElementById("name").textContent = name;
+    document.getElementById("ibanPretty").textContent = ibanPretty;
 
+    const toast = document.getElementById("toast");
+
+    function showToast(){
+      toast.style.display = "block";
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=> toast.style.display="none", 1500);
+    }
+
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(ibanPlain);
+        showToast();
+      } catch (e) {
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = ibanPlain;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        showToast();
+      }
+    });
+
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      const text = `Banka: ${bank}\nAlıcı: ${name}\nIBAN: ${ibanPretty}`;
+      if (navigator.share) {
+        try { await navigator.share({ title: "Ödeme Bilgileri", text }); } catch(e) {}
+      } else {
+        try { await navigator.clipboard.writeText(text); showToast(); } catch(e) {}
+        alert("Paylaş özelliği yok. Bilgileri kopyaladım, yapıştırabilirsin.");
+      }
+    });
+
+    const waText = encodeURIComponent(`Banka: ${bank}\nAlıcı: ${name}\nIBAN: ${ibanPretty}`);
+    document.getElementById("whatsBtn").href = `https://wa.me/?text=${waText}`;
+  </script>
 </body>
 </html>
