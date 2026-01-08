@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IBAN Kopyala</title>
+
+<style>
+:root{
+  --bg1:#0b1220;
+  --bg2:#0f1b2d;
+  --card:rgba(255,255,255,.06);
+  --stroke:rgba(255,255,255,.12);
+  --text:#ffffff;
+  --muted:rgba(255,255,255,.7);
+  --accent:#22c55e;
+  --radius:22px;
+  --shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #1f2b55 0%, transparent 60%),
+    radial-gradient(1000px 500px at 110% 10%, #143a2a 0%, transparent 60%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
+  color:var(--text);
+}
+
+.card{
+  width:100%;
+  max-width:420px;
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:28px;
+  backdrop-filter:blur(12px);
+}
+
+.title{
+  font-size:20px;
+  font-weight:600;
+  text-align:center;
+  margin-bottom:6px;
+}
+
+.subtitle{
+  font-size:13px;
+  text-align:center;
+  color:var(--muted);
+  margin-bottom:22px;
+}
+
+.iban-box{
+  border:1px dashed var(--stroke);
+  border-radius:16px;
+  padding:16px;
+  text-align:center;
+  font-size:18px;
+  letter-spacing:1px;
+  margin-bottom:18px;
+  word-break:break-all;
+}
+
+button{
+  width:100%;
+  border:none;
+  border-radius:14px;
+  padding:14px;
+  font-size:16px;
+  font-weight:600;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#04140b;
+  cursor:pointer;
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+.toast{
+  margin-top:14px;
+  font-size:13px;
+  text-align:center;
+  color:var(--accent);
+  display:none;
+}
+
+.footer{
+  margin-top:22px;
+  font-size:11px;
+  text-align:center;
+  color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="title">IBAN Kopyala</div>
+  <div class="subtitle">YAVUZ GROUP KUYUMCULUK SAN. VE TİC.</div>
+
+  <div class="iban-box" id="ibanText">
+    TR47 0001 0013 7897 7896 7950 04
+  </div>
+
+  <button onclick="copyIBAN()">IBAN’ı Kopyala</button>
+
+  <div class="toast" id="toast">IBAN kopyalandı ✅</div>
+
+  <div class="footer">
+    Güvenli ödeme için IBAN’ı kontrol etmeyi unutma
+  </div>
+</div>
+
+<script>
+function copyIBAN(){
+  const rawIBAN = "TR470001001378977896795004";
+  navigator.clipboard.writeText(rawIBAN).then(()=>{
+    const toast = document.getElementById("toast");
+    toast.style.display = "block";
+    setTimeout(()=> toast.style.display="none",2000);
+  });
+}
+</script>
+
+</body>
+</html>
